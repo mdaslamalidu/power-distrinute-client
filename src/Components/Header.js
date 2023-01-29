@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const Header = () => {
   return (
@@ -8,7 +8,7 @@ const Header = () => {
           <h2>Logo</h2>
         </div>
         <div>
-          <h2>Total Paid: 0</h2>
+          <h2>Total Paid: </h2>
         </div>
       </div>
     </div>
