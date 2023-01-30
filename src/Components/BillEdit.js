@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 
-const DetailsModal = ({ setModal, setLoading, setSpinner, setEmail }) => {
+const BillEdit = ({ setSpinner, setModal, handleId }) => {
+  const [myData, setmyData] = useState("");
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.target;
@@ -14,8 +16,9 @@ const DetailsModal = ({ setModal, setLoading, setSpinner, setEmail }) => {
       phone,
       amount,
     };
-    fetch("http://localhost:5000/add-billing", {
-      method: "POST",
+
+    fetch(`http://localhost:5000/update-billing/${handleId}`, {
+      method: "PUT",
       headers: {
         "content-type": "application/json",
       },
@@ -23,33 +26,41 @@ const DetailsModal = ({ setModal, setLoading, setSpinner, setEmail }) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
-        setLoading(false);
-        setModal(null);
-        setSpinner(true);
-        setEmail(email);
+        if (data.modifiedCount) {
+          setModal(null);
+          setSpinner(true);
+          toast.success("SuccessFully Updated");
+        }
       })
-      .catch((error) => {
-        console.log(error);
-      });
+      .catch((error) => console.log(error));
   };
+
+  useEffect(() => {
+    fetch(`http://localhost:5000/billing/${handleId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setmyData(data);
+        console.log(data);
+      })
+      .catch((error) => console.log(error));
+  }, [handleId]);
 
   return (
     <div>
       {/* The button to open modal */}
 
       {/* Put this part before </body> tag */}
-      <input type="checkbox" id="my-modal-3" className="modal-toggle" />
+      <input type="checkbox" id="my-modal-4" className="modal-toggle" />
       <div className="modal">
         <div className="modal-box relative">
           <label
-            htmlFor="my-modal-3"
+            htmlFor="my-modal-4"
             className="btn btn-sm btn-circle absolute right-2 top-2"
           >
             ✕
           </label>
           <h3 className="text-lg font-bold text-center uppercase">
-            Add Your Info
+            Update Your Info
           </h3>
           <div className="">
             <div>
@@ -63,6 +74,7 @@ const DetailsModal = ({ setModal, setLoading, setSpinner, setEmail }) => {
                     name="name"
                     type="text"
                     placeholder="Your Name"
+                    defaultValue={myData.fullName}
                   />
                 </div>
                 <div className="form-control w-full my-2">
@@ -74,6 +86,7 @@ const DetailsModal = ({ setModal, setLoading, setSpinner, setEmail }) => {
                     name="email"
                     type="email"
                     placeholder="Email"
+                    defaultValue={myData.email}
                   />
                 </div>
                 <div className="form-control w-full my-2">
@@ -85,6 +98,7 @@ const DetailsModal = ({ setModal, setLoading, setSpinner, setEmail }) => {
                     name="phone"
                     type="number"
                     placeholder="Your Phone"
+                    defaultValue={myData.phone}
                   />
                 </div>
                 <div className="form-control w-full my-2">
@@ -96,10 +110,11 @@ const DetailsModal = ({ setModal, setLoading, setSpinner, setEmail }) => {
                     name="amount"
                     type="number"
                     placeholder="Your Amount"
+                    defaultValue={myData.amount}
                   />
                 </div>
                 <button type="submit" className="btn btn-slate-700 w-full my-2">
-                  Add Your Data
+                  Update Your Data
                 </button>
               </form>
             </div>
@@ -110,4 +125,4 @@ const DetailsModal = ({ setModal, setLoading, setSpinner, setEmail }) => {
   );
 };
 
-export default DetailsModal;
+export default BillEdit;
